@@ -1,0 +1,445 @@
+/*
+    Core of program created by: Professor Paul J. Conrad
+    Method addToArray and all tests for it were added by: Emery Valencia
+    Created on 2/29/16
+    
+    Description: The method addToArray takes in a string argument and adds it
+    to the string array, therefore adding an element to the array. It is a void
+    function and prints out the array after an element has been added.
+
+    ***************************************************************************
+    
+    3/30/16: mergeSort, selectionSort, bubbleSort added by Emery Valencia
+    Assignment: Implement in your Bag class, the Selection Sort and Merge Sort 
+    ( 10 points extra credit - implement a third sorting algorithm of your choice ). 
+    In all of the sorting algorithms you implement, make sure to have them pass 
+    a boolean parameter that dictates the sorting order ( true - sort in ascending 
+    order from smallest to largest, false - sort in descending order from largest 
+    to smallest ).
+
+    Provide a main program, that is a test driver, demonstrating the sorting 
+    algorithms working for Bags of String, Integers, and Float ( primitive types 
+    such as int and float, you need to use the their respective wrapper classes 
+    Integer and Float ).
+
+*/
+
+//Begin Class BagDemo
+public class BagDemo {
+
+    public static void main(String[] args) {
+    
+        System.out.println("Testing different data structures!");
+        
+        //Integer test
+        Bag<Integer> bagOfInts = new Bag();
+        bagOfInts.add(10);
+        bagOfInts.add(12);
+        bagOfInts.add(7);
+        bagOfInts.add(50);
+        bagOfInts.add(36);
+        System.out.println("\nSorting integers: ");
+        System.out.println("_________________________________________________");
+        bagOfInts.selectionSorting(false);
+        bagOfInts.selectionSorting(true);
+        bagOfInts.mergeSorting(false);
+        bagOfInts.mergeSorting(true);
+        bagOfInts.bubbleSorting(false);
+        bagOfInts.bubbleSorting(true);
+        
+        //Float test
+        Bag<Float> bagOfFlts = new Bag();
+        bagOfFlts.add(1f);
+        bagOfFlts.add(12f);
+        bagOfFlts.add(7f);
+        bagOfFlts.add(13.6f);
+        bagOfFlts.add(1.23f);
+        System.out.println("\nSorting floats: ");
+        System.out.println("_________________________________________________");
+        bagOfFlts.selectionSorting(false);
+        bagOfFlts.selectionSorting(true);
+        bagOfFlts.mergeSorting(false);
+        bagOfFlts.mergeSorting(true);
+        bagOfFlts.bubbleSorting(false);
+        bagOfFlts.bubbleSorting(true);
+        
+        //String test
+        Bag<String> bagOfStr = new Bag();
+        bagOfStr.add("Dog");
+        bagOfStr.add("Cat");
+        bagOfStr.add("Parrot");
+        bagOfStr.add("Horse");
+        bagOfStr.add("Bunny");
+        System.out.println("\nSorting strings: ");
+        System.out.println("_________________________________________________");
+        bagOfStr.selectionSorting(false);
+        bagOfStr.selectionSorting(true);
+        bagOfStr.mergeSorting(false);
+        bagOfStr.mergeSorting(true);
+        bagOfStr.bubbleSorting(false);
+        bagOfStr.bubbleSorting(true);
+    }  
+    
+    //original contents of bag class moved to method testOriginalBag
+    public static void testOriginalBag(){
+        
+        Bag<String> bag_of_strings = new Bag();
+        
+        bag_of_strings.add("Hello");
+        bag_of_strings.add("World!");
+        bag_of_strings.add("Structures1");
+        bag_of_strings.add("Data");
+        bag_of_strings.add("Structures2");
+        bag_of_strings.remove("Structures1");
+        
+        System.out.println("Size of bag_of_strings: " + bag_of_strings.getSize() );
+        System.out.println("Contents of bag_of_strings: ");
+        Object[] a = bag_of_strings.toArray();
+        for(int i=0;i<a.length;i++) {
+            System.out.printf("a[%d]=%s\n",i,a[i]);
+        }        
+        //**********************************************************************
+        //Testing addToArray method
+        //**********************************************************************
+        System.out.println("\nAdding one string to the array...\n");
+        System.out.println("Contents of bag_of_strings:");
+        bag_of_strings.addToArray("Added me!");         //adds element to array
+        bag_of_strings.addToArray("Added another!");    //adds element to array
+        bag_of_strings.addToArray("Added one more!");   //adds element to array
+         //prints out current bag size to confirm that elements are added to bag
+        System.out.println("Size of bag_of_strings: " + bag_of_strings.getSize());
+    }
+}
+//End Class BagDemo
+
+
+
+//Begin Class Bag
+public final class Bag<T extends Comparable <? super T>> implements BagInterface <T> {
+    private final T[] bag_items;
+    private int numberOfEntries;
+    private T[] arr; 
+    
+    //**************************************************************************
+    //Varibles added for sorting methods
+    //**************************************************************************
+    private boolean input;
+    //**************************************************************************
+    
+    //constructors
+    public Bag() {
+        bag_items = (T[])new Comparable[5]; //max value the bag can hold
+        this.numberOfEntries=0;
+    }
+    
+    public Bag(int startSize)
+    {
+        bag_items = (T[])new Comparable[startSize];
+        this.numberOfEntries=0;
+    } 
+    
+    // return the current size of the bag, or the number of elements in the bag
+    public int getSize(){
+        return numberOfEntries;
+    }
+    
+    // returns true if bag is empty or false if bag is not empty
+    public boolean isEmpty() {
+        return this.numberOfEntries == 0;
+    }
+    
+    // add item to bag, returns true if successful, false if not
+    public boolean add(T item) {
+        if ( this.numberOfEntries >= bag_items.length ){
+            return false;
+        } // cannot add more items
+        else{
+            bag_items[numberOfEntries++] = item;
+        }
+        return true;
+    }
+    
+    // returns true if item is removed from bag
+    public boolean remove(T item) {
+        for(int i=0;i<this.numberOfEntries;i++)
+        {
+            if ( this.bag_items[i]==item )
+            {
+                for(int j=i+1;j<this.numberOfEntries;j++)
+                    this.bag_items[j-1]=this.bag_items[j];
+                this.numberOfEntries--;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    // clear the bag of all items
+    public void clear()
+    {
+        this.numberOfEntries=0; // reset numberOfEntries to 0 & overwrite old data 
+    }
+    
+    // returns true if item found in bag
+    public boolean contains(T item) {
+        for(int i=0;i<this.numberOfEntries;i++) if ( bag_items[i]==item ) return true;
+        return false;
+    }
+    
+    //toArray method
+    public T[] toArray() {
+        arr = (T[])new Object[this.numberOfEntries];
+        for(int i=0;i<this.numberOfEntries;i++) arr[i]=this.bag_items[i];
+        return arr;
+    }       
+    
+    //addArray method
+    public void addToArray(T addMe){
+            bag_items[numberOfEntries++] = addMe;
+            arr = (T[])new Object[this.numberOfEntries];
+            for (int i=0;i<numberOfEntries;i++){
+                arr[i] = this.bag_items[i]; //adds item to array
+                System.out.print(arr[i] + " ");
+            }
+            System.out.println("\n");
+    }
+    
+    //**************************************************************************
+    //SELECTION SORTING METHODS
+    //**************************************************************************
+    
+    public void selectionSorting(boolean input){
+        
+        //default case if bag_items has 0 or 1 element
+        checkObjects(bag_items, numberOfEntries);
+        
+        //input = false,  descending order        
+        if(input == false){
+            System.out.print("Printing selection sort array in descending order: ");
+            selectionDescending(bag_items);     
+            printArray(bag_items);
+        }
+        //input = true, ascending order
+        else{
+            System.out.print("Printing selection sort array in ascending order: ");
+            selectionAscending(bag_items);            
+            printArray(bag_items);
+        }
+    }
+       
+   public void selectionAscending(T[]bag_items){  
+        T min = bag_items[0];
+        int minIndex = 0;
+        for (int i = 0; i < numberOfEntries; i++) {
+            min = bag_items[i];
+            for (int j = i + 1; j < numberOfEntries; j++) {
+                if (bag_items[j].compareTo(min) < 0) {
+                    min = bag_items[j];
+                    minIndex = j;
+                }
+            }
+            if (min != bag_items[i]) {
+                swap(bag_items, i, minIndex);
+            }   
+        }
+   }
+    
+    public void selectionDescending(T[]bag_items){  
+        T max = bag_items[0];
+        int maxIndex = 0;
+        for (int i = 0; i < numberOfEntries; i++) {
+            max = bag_items[i];
+            for (int j = i + 1; j < numberOfEntries; j++) {
+                if (bag_items[j].compareTo(max) > 0) {
+                    max = bag_items[j];
+                    maxIndex = j;
+                }
+            }
+            if (max != bag_items[i]) {
+                swap(bag_items, i, maxIndex);
+            }   
+        }
+    }
+   
+    
+    //**************************************************************************
+    //MERGE SORTING METHODS
+    //**************************************************************************  
+    public void mergeSorting(boolean input){
+        
+        //default case if bag_items has 0 or 1 element
+        checkObjects(bag_items,numberOfEntries);
+        
+        //creates temporary array
+        T [] tempArray = (T[])new Comparable[numberOfEntries];
+        
+        //input = false,  descending order        
+        if(input == false){
+            System.out.print("Printing merge sort array in descending order: ");
+            mergeSort(bag_items, tempArray, 0, numberOfEntries);     
+            flipArray(bag_items, tempArray);
+            printArray(tempArray);
+        }
+        //input = true, ascending order
+        else{
+            System.out.print("Printing merge sort array in ascending order: ");
+            mergeSort(bag_items, tempArray, 0, numberOfEntries);            
+            printArray(bag_items);
+        }
+    }
+    
+    //mergeSort method that splits the array and calls the merging method
+    public void mergeSort(T[]a, T [] tempArray, int lowIndex, int highIndex){
+        if(lowIndex == highIndex)
+            return;
+        else{
+            int midIndex = (lowIndex + highIndex)/2; //determines the midpoint
+            mergeSort(bag_items, tempArray, lowIndex, midIndex); //sort left half
+            mergeSort(bag_items, tempArray, midIndex + 1, highIndex); //sort right half
+            
+            if(input = false){
+                mergeAscending(bag_items, tempArray, lowIndex, midIndex+1, highIndex);
+                flipArray(bag_items, tempArray); //makes the array into descending order
+            } else{
+                mergeAscending(bag_items, tempArray, lowIndex, midIndex+1, highIndex);
+            }
+        }
+    }
+    
+    //merges into ascending order
+    public void mergeAscending(T[] bag_items, T[] tempArray, int lowIndex, int midIndex, int highIndex) {
+        int startLeft = lowIndex;
+        int endLeft = midIndex;
+        int startRight = midIndex + 1;
+        int endRight = highIndex;
+        int index = 0;
+        
+        while ((startLeft <= endLeft) && (startRight <= endRight)){
+            if (bag_items[startLeft].compareTo(bag_items[startRight]) <= 0){
+                tempArray[index] = bag_items[startLeft];
+                startLeft++;
+            } else{
+                bag_items[index] = bag_items[startRight];
+                startRight++;
+            }
+            index++;
+        }
+    }
+    
+    //flips the array into descending order (okay for small arrays!)
+    public void flipArray(T [] bag_items, T [] tempArray){
+        for(int i = numberOfEntries-1, j = 0; i >= 0; i--){
+            tempArray[j] = bag_items[i];
+            j++;
+        }
+    }
+    
+    //**************************************************************************
+    //BUBBLE SORTING METHODS
+    //**************************************************************************
+     public void bubbleSorting(boolean input){
+        
+        //default case if bag_items has 0 or 1 element
+        checkObjects(bag_items, numberOfEntries);
+        
+        //input = false,  descending order        
+        if(input == false){
+            System.out.print("Printing bubble sort array in descending order: ");
+            bubbleDescending(bag_items);     
+            printArray(bag_items);
+        }
+        //input = true, ascending order
+        else{
+            System.out.print("Printing bubble sort array in ascending order: ");
+            bubbleAscending(bag_items);            
+            printArray(bag_items);
+        }
+    }
+    
+     //bubble descending method
+    public void bubbleDescending(T [] bag_items) {        
+        boolean swapped = true; //initial condition is true
+        
+        while(swapped == true){
+            swapped = false; //if there is no swap, loop will end
+            for (int index = 0; index < numberOfEntries-1; index++){
+                if(bag_items[index].compareTo(bag_items[index+1]) < 0){
+                    swap(bag_items, index, index + 1);
+                    swapped = true;
+                } 
+            }
+        }
+    }
+    
+    //bubble ascending method
+    public void bubbleAscending(T [] bag_items) {        
+        boolean swapped = true; //initial condition is true
+        
+        while(swapped == true){
+            swapped = false; //if there is no swap, loop will end
+            for (int index = 0; index < numberOfEntries-1; index++){
+                if(bag_items[index].compareTo(bag_items[index+1]) > 0){
+                    swap(bag_items, index, index + 1);
+                    swapped = true;
+                } 
+            }
+        }
+    }
+    
+    //**************************************************************************
+    //HELPER FUNCTIONS: printArray, swap, checkObjects
+    //**************************************************************************
+        
+    public static void printArray(Object[]array){
+        for (int i = 0; i < array.length; i++)
+            System.out.print(array[i] + " ");
+        System.out.println();        
+    }
+    
+    public static void swap(Object [] array, int a, int b){
+        Object temp = array[a];
+        array[a] = array[b];
+        array[b] = temp;
+    }
+    
+    public static void checkObjects(Object [] array, int entries){
+           //default case if entries == 0 or 1
+        if(entries == 0 || entries == 1){
+            System.out.println("Zero or two entries: ");
+            printArray(array);
+        }
+    }
+}
+//End Class Bag
+    
+    
+    
+//Begin Inteface BagInterface
+public interface BagInterface<T> {
+    // return the current size of the bag, or the number of elements in the bag
+    public int getSize();
+    
+    // returns true if bag is empty or false if bag is not empty
+    public boolean isEmpty();
+    
+    // add item to bag, returns true if successful, false if not
+    public boolean add(T item);
+    
+    // returns true if item is removed from bag
+    public boolean remove(T item);
+    
+    // clear the bag of all items
+    public void clear();
+    
+    // returns true if item found in bag
+    public boolean contains(T item);
+    
+    // returns array of items in bag
+    public T[] toArray();
+    
+    //adds an element to an array
+    public void addToArray(T item);
+}
+//End Interface BagInterface
+    
+
