@@ -5,6 +5,9 @@
     and area via user interaction using a JSlider
 */
 
+//************************************************************************************************************************************
+//Main Method 
+//************************************************************************************************************************************
 package circleinfoassignment;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -75,5 +78,38 @@ public class CircleInfoAssignment {
                 new CircleInfoAssignment();
             }
         });
+    }
+}
+
+
+//************************************************************************************************************************************
+//Class CirclePanel
+//************************************************************************************************************************************
+package circleinfoassignment;
+
+import java.awt.Graphics;
+import javax.swing.JPanel;
+
+public class CirclePanel extends JPanel{
+    
+    private int diameter;
+    
+    //draws circle    
+    @Override
+    public void paintComponent(Graphics g)
+    {
+        super.paintComponent(g);
+        g.fillOval(10, 10, getDiameter(), getDiameter());
+    }
+    
+    //Sets diameter 
+    public void setDiameter(int diameter){
+        this.diameter = diameter;
+        repaint();
+    }
+    
+    //returns diameter
+    public int getDiameter(){
+        return this.diameter;
     }
 }
