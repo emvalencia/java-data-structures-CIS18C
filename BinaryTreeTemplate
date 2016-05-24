@@ -1,0 +1,246 @@
+//******************************************************************************
+// BinarySearchTreeDiscussion.java
+//******************************************************************************
+/*
+    BinaryTree Class
+    Initially created by: Paul Conrad (BinaryTree.java) on 5/17/16
+    Modified and upgraded to template class by: Emery Valencia
+        -Added: template class conversion in BinaryTree.java and all Objects, 
+         method calls, and outputs in BinarySearchTree.java 
+    Last modified on: 5/23/16
+*/
+package bin_tree;
+
+public class BinarySearchTreeDiscussion 
+{
+    public static void main(String[] args) {
+
+        //Creates object intTree of type Integer
+        BinaryTree<Integer> intTree = new BinaryTree();
+        
+        //Adds integers to tree
+        intTree.add(5);
+        intTree.add(10);
+        intTree.add(7);
+        intTree.add(24);
+        intTree.add(2);
+        
+        //Displays trees to output
+        System.out.println("Displaying Integers via template class:");
+        System.out.print("preOrder Traversal:");
+        intTree.preOrderTraversal();
+        System.out.print("inOrder Traversal:");
+        intTree.inOrderTraversal();
+        System.out.print("postOrder Traversal:");
+        intTree.postOrderTraversal();
+        System.out.println();
+        
+        //Creates object strTree of type String
+        BinaryTree<String> strTree = new BinaryTree();
+        
+        //Adds Strings to tree
+        strTree.add("Dog");
+        strTree.add("Cat");
+        strTree.add("Horse");
+        strTree.add("Cow");
+        strTree.add("Antelope");
+        
+        //Display Strings to output
+        System.out.println("Displaying Strings via template class:");
+        System.out.print("preOrder Traversal:");
+        strTree.preOrderTraversal();
+        System.out.print("inOrder Traversal:");
+        strTree.inOrderTraversal();
+        System.out.print("postOrder Traversal:");
+        strTree.postOrderTraversal();
+        System.out.println();
+    }    
+}
+
+
+/*
+    Original BinaryTree Class and skeleton: by Professor Paul Conrad
+    Template Class conversion completed by: Emery Valencia
+    Last modified on: 5/23/16
+
+*/
+
+
+
+package bin_tree;
+
+//******************************************************************************
+// BinaryTree.java
+//******************************************************************************
+
+//BinaryTree extends Comparable Class to compare objects
+public class BinaryTree <T extends Comparable> {
+    
+    private TreeNode root;
+    
+    public BinaryTree()
+    {
+        root = null;
+    }
+    
+    public void add(T data_item)
+    {
+        root = insertNode(data_item,root);
+    }
+    
+    private TreeNode insertNode(T item, TreeNode subRoot)
+    {
+        if ( subRoot == null ) //tree is empty
+        {
+            return new TreeNode(item,null,null);
+        }
+        else if (item.compareTo(subRoot.getData())< 0) //traverses left if negative
+        {
+            subRoot.setLeftNode(insertNode(item,subRoot.getLeftNode()));
+            return subRoot;
+        }
+        else //traverses right if positive
+        {
+            subRoot.setRightNode(insertNode(item,subRoot.getRightNode()));
+            return subRoot;
+        }
+    }
+    
+    public boolean contains(T search_value)
+    {
+        return checkInTree(search_value,root);
+    }
+    
+    private boolean checkInTree(Comparable sv, TreeNode subRoot)
+    {
+        if ( subRoot == null ) return false;
+        else if ( subRoot.getData()==sv) return true;
+        else if ( sv.compareTo(subRoot.getData()) < 0) return checkInTree(sv, subRoot.getLeftNode());
+        else return checkInTree(sv, subRoot.getRightNode());
+    }
+        
+    //**************************************************************************
+    // Methods for preorder, inorder, and postorder traversals
+    //**************************************************************************
+    
+    //Outputs entries in postOrder form of a binary tree
+    public void preOrderTraversal()
+    {
+        this.preOrder(root);       
+        System.out.println();
+    }
+    
+    //Organizes entries in preOrder form of a binary tree
+    private void preOrder(TreeNode currentNode)
+    {
+        if (currentNode == null) 
+        {            
+            return;
+        }
+        
+        System.out.print(currentNode.getData()+" ");
+        this.preOrder(currentNode.getLeftNode());
+        this.preOrder(currentNode.getRightNode());
+    }
+    
+    //Outputs entries in inOrder form of a binary tree
+    public void inOrderTraversal()
+    {
+        this.inOrder(root);       
+        System.out.println();
+    }
+    
+    //Organizes entries in inOrder form of a binary tree
+    private void inOrder(TreeNode currentNode)
+    {
+        if (currentNode == null) 
+        {            
+            return;
+        }
+        
+        this.inOrder(currentNode.getLeftNode());
+        System.out.print(currentNode.getData()+" ");
+        this.inOrder(currentNode.getRightNode());
+    }
+    
+    //Outputs entries in postOrder form of a binary tree
+    public void postOrderTraversal()
+    {
+        this.postOrder(root);       
+        System.out.println();
+    }
+    
+    //Organizes entries in postOrder form of a binary tree
+    private void postOrder(TreeNode currentNode)
+    {
+        if (currentNode == null) 
+        {            
+            return;
+        }
+        
+        this.postOrder(currentNode.getLeftNode());
+        this.postOrder(currentNode.getRightNode());
+        System.out.print(currentNode.getData()+" ");        
+    }
+
+       
+    //**************************************************************************
+    // TreeNode Inner Class
+    //**************************************************************************
+    
+    private class TreeNode
+    {
+        private Object data;
+        private TreeNode leftNode;
+        private TreeNode rightNode;
+        
+        public TreeNode(Object newData, TreeNode left, TreeNode right)
+        {
+            this.data=newData;
+            this.leftNode=left;
+            this.rightNode=right;
+        }
+
+        /**
+         * @return the data
+         */
+        public Object getData() {
+            return this.data;
+        }
+
+        /**
+         * @param data the data to set
+         */
+        public void setData(T data) {
+            this.data = data;
+        }
+
+        /**
+         * @return the leftNode
+         */
+        public TreeNode getLeftNode() {
+            return leftNode;
+        }
+
+        /**
+         * @param leftNode the leftNode to set
+         */
+        public void setLeftNode(TreeNode leftNode) {
+            this.leftNode = leftNode;
+        }
+
+        /**
+         * @return the rightNode
+         */
+        public TreeNode getRightNode() {
+            return rightNode;
+        }
+
+        /**
+         * @param rightNode the rightNode to set
+         */
+        public void setRightNode(TreeNode rightNode) {
+            this.rightNode = rightNode;
+        }      
+    } // end of TreeNode inner class
+}
